@@ -46,6 +46,8 @@ func CMDAnalyze(_cmd string) {
 			break
 		}
 		List(segs[1])
+	case "get":
+		Get(segs[1])
 	case "help":
 		Help()
 	case "exit":

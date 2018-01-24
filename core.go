@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +18,7 @@ const FMT string = "%-15s%s\n"
 var conn net.Conn
 
 var ok chan int
+var fileName = make(chan string, 1)
 
 func ExecCMD(cmd string) {
 	checkConn()
@@ -107,6 +110,7 @@ func Pass(pass string) {
 }
 
 func List(dir string) {
+	fileName <- ""
 	Port()
 
 	if dir == "" {
@@ -160,17 +164,40 @@ func PORT(addr string) (n5 int, n6 int) {
 		defer listener.Close()
 		defer conn.Close()
 
-		buf, err := ioutil.ReadAll(conn)
-		if err != nil {
-			log.Println("ReadAll:", err)
-			return
-		}
+		temp := <-fileName
+		if temp == "" {
+			buf, err := ioutil.ReadAll(conn)
+			if err != nil {
+				log.Println("ReadAll:", err)
+				return
+			}
+			fmt.Printf("\n%s\n", buf)
+		} else {
+			file, err := os.OpenFile(temp, os.O_CREATE, 0666)
+			if err != nil {
+				log.Println("OpenFIle:", err)
+				return
+			}
+			defer file.Close()
 
-		fmt.Printf("\n%s\n", buf)
+			_, err = io.Copy(file, conn)
+			if err != nil {
+				log.Println("Copy:", err)
+				return
+			}
+		}
 	}()
 
 	return port / 256, port % 256
 
+}
+
+func Get(path string) {
+	fileName <- path
+	Port()
+
+	cmd := "RETR " + path + "\r\n"
+	ExecCMD(cmd)
 }
 
 func Help() {
