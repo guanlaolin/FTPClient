@@ -13,7 +13,7 @@ func UI() {
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Print("ftp:>")
+		fmt.Print("ftp:> ")
 		line, _, err := reader.ReadLine()
 		if err != nil {
 			log.Println("ReadLine:", err)

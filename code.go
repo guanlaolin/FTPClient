@@ -26,7 +26,7 @@ func CodeAnalyze(code int) {
 
 	case RESP_CODE_SERVICE_READY:
 		var user string
-		fmt.Print("Require username:")
+		fmt.Print("Require username: ")
 		_, err := fmt.Scanln(&user)
 		if err != nil {
 			log.Println("Scanln:", err)
@@ -39,7 +39,7 @@ func CodeAnalyze(code int) {
 
 	case RESP_CODE_NEED_PASS:
 		var pass string
-		fmt.Print("Require password:")
+		fmt.Print("Require password: ")
 		_, err := fmt.Scanln(&pass)
 		if err != nil {
 			log.Println("Scanln:", err)

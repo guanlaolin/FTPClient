@@ -17,7 +17,6 @@ const FMT string = "%-15s%s\n"
 
 var conn net.Conn
 
-var ok chan int
 var fileName = make(chan string, 1)
 
 func ExecCMD(cmd string) {
@@ -193,6 +192,10 @@ func PORT(addr string) (n5 int, n6 int) {
 }
 
 func Get(path string) {
+	if path == "" {
+		fmt.Println("Usage: get file")
+		return
+	}
 	fileName <- path
 	Port()
 
@@ -201,8 +204,16 @@ func Get(path string) {
 }
 
 func Help() {
-	fmt.Printf(FMT, "open", "connect to remote ftp server.")
-	fmt.Printf(FMT, "user", "")
+	fmt.Printf(FMT, "open", "connect to server.")
+	fmt.Printf(FMT, "user", "send username to server.")
+	fmt.Printf(FMT, "get", "download file from server.")
+	fmt.Printf(FMT, "put", "upload file to server.")
+	fmt.Printf(FMT, "cd", "change directory of server.")
+	fmt.Printf(FMT, "lcd", "change directory of local.")
+	fmt.Printf(FMT, "pwd", "print work directory of server.")
+	fmt.Printf(FMT, "lpwd", "print work directory of local.")
+	fmt.Printf(FMT, "ls", "list content of  directory of server")
+	fmt.Printf(FMT, "lls", "list content of directory of local")
 	fmt.Printf(FMT, "help", "show help.")
 	fmt.Printf(FMT, "quit", "exit program.")
 }
