@@ -191,6 +191,23 @@ func PORT(addr string) (n5 int, n6 int) {
 
 }
 
+func Lls() {
+
+}
+
+func Lcd(dir string) {
+	if dir == "" {
+		fmt.Println("Usage: lcd dir")
+		return
+	}
+
+	err := os.Chdir(dir)
+	if err != nil {
+		log.Println("Chdir:", err)
+		return
+	}
+}
+
 func Get(path string) {
 	if path == "" {
 		fmt.Println("Usage: get file")
@@ -201,6 +218,15 @@ func Get(path string) {
 
 	cmd := "RETR " + path + "\r\n"
 	ExecCMD(cmd)
+}
+
+func Lpwd() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Println("Getwd:", err)
+		return
+	}
+	fmt.Println(dir)
 }
 
 func Help() {

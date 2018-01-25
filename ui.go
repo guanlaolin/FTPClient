@@ -46,8 +46,16 @@ func CMDAnalyze(_cmd string) {
 			break
 		}
 		List(segs[1])
+	case "lls":
+		fallthrough
+	case "ldir":
+		Lls()
+	case "lcd":
+		Lcd(segs[1])
 	case "get":
 		Get(segs[1])
+	case "lpwd":
+		Lpwd()
 	case "help":
 		Help()
 	case "exit":
