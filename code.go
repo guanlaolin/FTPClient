@@ -22,7 +22,6 @@ func CodeAnalyze(code int) {
 			log.Println("ReadALL:", err)
 			return
 		}
-		fmt.Printf("%s\n", buf)
 
 	case RESP_CODE_SERVICE_READY:
 		var user string

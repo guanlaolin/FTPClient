@@ -11,10 +11,16 @@ import (
 func UI() {
 	fmt.Println("Welcome to use dogod-ftp-client!")
 
+	if len(os.Args) == 2 {
+		Open(os.Args[1])
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print("ftp:> ")
+
 		line, _, err := reader.ReadLine()
+
 		if err != nil {
 			log.Println("ReadLine:", err)
 			continue
@@ -31,20 +37,18 @@ func UI() {
 
 func CMDAnalyze(_cmd string) {
 	segs := strings.Split(_cmd, " ")
+	if len(segs) == 1 {
+		segs = append(segs, "")
+	}
 
 	switch segs[0] {
 	case "open":
-		fmt.Println("connecting ", segs[1])
 		Open(segs[1])
 	case "user":
 		User(segs[1])
 	case "ls":
 		fallthrough
 	case "dir":
-		if len(segs) == 1 {
-			List("")
-			break
-		}
 		List(segs[1])
 	case "lls":
 		fallthrough
@@ -57,7 +61,7 @@ func CMDAnalyze(_cmd string) {
 	case "lpwd":
 		Lpwd()
 	case "help":
-		Help()
+		Help(segs[1])
 	case "exit":
 		fallthrough
 	case "quit":

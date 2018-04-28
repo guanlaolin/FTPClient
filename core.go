@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -18,6 +19,21 @@ const FMT string = "%-15s%s\n"
 var conn net.Conn
 
 var fileName = make(chan string, 1)
+
+var helps = map[string]string{
+	"open": "connect to server.",
+	"user": "send username to server.",
+	"get":  "download file from server.",
+	"put":  "upload file to server.",
+	"cd":   "change directory of server.",
+	"lcd":  "change directory of local.",
+	"pwd":  "print work directory of server.",
+	"lpwd": "print work directory of local.",
+	"ls":   "list content of  directory of server",
+	"lls":  "list content of directory of local",
+	"help": "show help.",
+	"quit": "exit program.",
+}
 
 func ExecCMD(cmd string) {
 	checkConn()
@@ -58,7 +74,7 @@ func Open(addr string) {
 
 	segs := strings.Split(addr, ":")
 	//validate ip
-	//
+	ValidateIP(segs[0])
 
 	if len(segs) > 2 {
 		fmt.Println("Usage:open host[:port]")
@@ -75,6 +91,7 @@ func Open(addr string) {
 		return
 	}
 
+	fmt.Println("connecting ", addr)
 	conn, err = net.DialTimeout("tcp", addr, du)
 	if err != nil {
 		log.Println("Dial:", err)
@@ -229,19 +246,17 @@ func Lpwd() {
 	fmt.Println(dir)
 }
 
-func Help() {
-	fmt.Printf(FMT, "open", "connect to server.")
-	fmt.Printf(FMT, "user", "send username to server.")
-	fmt.Printf(FMT, "get", "download file from server.")
-	fmt.Printf(FMT, "put", "upload file to server.")
-	fmt.Printf(FMT, "cd", "change directory of server.")
-	fmt.Printf(FMT, "lcd", "change directory of local.")
-	fmt.Printf(FMT, "pwd", "print work directory of server.")
-	fmt.Printf(FMT, "lpwd", "print work directory of local.")
-	fmt.Printf(FMT, "ls", "list content of  directory of server")
-	fmt.Printf(FMT, "lls", "list content of directory of local")
-	fmt.Printf(FMT, "help", "show help.")
-	fmt.Printf(FMT, "quit", "exit program.")
+func Help(cmd string) {
+	if cmd == "" {
+		for key, value := range helps {
+			fmt.Printf(FMT, key, value)
+		}
+	} else if helps[cmd] == "" {
+		fmt.Println("Unrecognized cmd:", cmd)
+		return
+	} else {
+		fmt.Println(FMT, helps[""])
+	}
 }
 
 func getResponCode(buf []byte) int {
@@ -255,4 +270,26 @@ func checkConn() {
 		fmt.Println("Not connected")
 		return
 	}
+}
+
+func ValidateIP(ip string) bool {
+	if ip == "" {
+		return false
+	}
+
+	segs := strings.Split(ip, ".")
+	if len(segs) != 4 {
+		return false
+	}
+
+	for _, v := range segs {
+		num, err := strconv.Atoi(v)
+		if err != nil {
+			return false
+		}
+		if num < 0 || num > 255 {
+			return false
+		}
+	}
+	return true
 }

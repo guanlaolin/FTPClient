@@ -1,18 +1,24 @@
 package main
 
 import (
-	"os"
-	"os/signal"
+	"bytes"
 )
 
 const PORT_MIN int = 40000
 const PORT_RANGE int = 5000
 
-var exit chan int
+var exit = make(chan int)
+
+var buffer bytes.Buffer
 
 func main() {
-	signal.Ignore(os.Interrupt, os.Kill)
+	//go Cli()
 
-	UI()
+	go UI()
+
 	<-exit
+}
+
+func Debug() {
+
 }
